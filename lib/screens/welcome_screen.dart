@@ -11,10 +11,51 @@ class WelcomeScreen extends StatefulWidget {
   _WelcomeScreenState createState() => _WelcomeScreenState();
 }
 
-class _WelcomeScreenState extends State<WelcomeScreen> {
+// SingleTickerProviderStateMixin is needed for the vsync property inside of the AnimationController.
+class _WelcomeScreenState extends State<WelcomeScreen>
+    with SingleTickerProviderStateMixin {
+  // Create a variable called controller that can hold an AnimationController
+  AnimationController controller;
+
+  // Create a variable called animation that can hold an Animation
+  Animation animation;
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the AnimationController
+    controller = AnimationController(
+      duration: Duration(seconds: 1),
+      vsync: this,
+    );
+
+    // Adds a curved animation to the controller.
+    // Curved as in the value changes in a fashion to my desire.
+    animation = CurvedAnimation(parent: controller, curve: Curves.decelerate);
+
+    // Tells the controller to move forward with the animation. Use controller.reverse(from: 1.0); to play around with this.
+    controller.forward();
+
+    // Need a listener to be called each time the controller does something.
+    // Need set state to tell Flutter that a value is dirty. Without out setstate, no animation will happen.
+    controller.addListener(() {
+      setState(() {});
+//      print(controller.value);
+      print(animation.value);
+    });
+  }
+
+  // Removes the controller to free up resources. Without this code, the controller will won't go away.
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // withOpacity changes the transparency of the background
+//      backgroundColor: Colors.red.withOpacity(controller.value),
       backgroundColor: Colors.white,
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.0),
@@ -29,7 +70,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   tag: 'logo',
                   child: Container(
                     child: Image.asset('images/logo.png'),
-                    height: 60.0,
+//                    Because animation.value ranges between 0 - 1, you wont see a difference in height that much. Therefore x100
+                    height: animation.value * 100,
                   ),
                 ),
                 Text(
