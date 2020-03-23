@@ -15,7 +15,18 @@ class FlashChat extends StatelessWidget {
           body1: TextStyle(color: Colors.black54),
         ),
       ),
-      home: WelcomeScreen(),
+//      Can't use home property if using initialRouter
+//      home: WelcomeScreen(),
+//      Because WelcomeScreen's id variable is static, you don't have to create a new object
+//      called WelcomeScreen(). This saves us resources not having to create a new object.
+      initialRoute: WelcomeScreen.id,
+      // Sets up all the routes for navigation
+      routes: {
+        WelcomeScreen.id: (context) => WelcomeScreen(),
+        'login_screen': (context) => LoginScreen(),
+        'registration_screen': (context) => RegistrationScreen(),
+        'chat_screen': (context) => ChatScreen(),
+      },
     );
   }
 }
