@@ -10,11 +10,6 @@ class FlashChat extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData.dark().copyWith(
-        textTheme: TextTheme(
-          body1: TextStyle(color: Colors.black54),
-        ),
-      ),
 //      Can't use home property if using initialRouter
 //      home: WelcomeScreen(),
 //      Because WelcomeScreen's id variable is static, you don't have to create a new object
