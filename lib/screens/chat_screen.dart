@@ -35,14 +35,14 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  void getMessages() async {
-    final messages = await _firestore.collection('messages').getDocuments();
-    for (var message in messages.documents) {
-      print(message.data);
-    }
-  }
+//  void getMessages() async {
+//    final messages = await _firestore.collection('messages').getDocuments();
+//    for (var message in messages.documents) {
+//      print(message.data);
+//    }
+//  }
 
-  // Shows the list of messages whenever new data is added to the database
+  // Like a listener - Shows the list of messages whenever new data is added to the database
   void messagesStream() async {
     await for (var snapshot in _firestore.collection('messages').snapshots()) {
       for (var message in snapshot.documents) {
@@ -74,6 +74,31 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
+            // Widget used to work with stream of data.
+            // <QuerySnapshot> since that's the return data type of .snapshots()
+            StreamBuilder<QuerySnapshot>(
+              // .snapshots() returns a stream.
+              stream: _firestore.collection('messages').snapshots(),
+              // snapshot it the data that is returned
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  final messages = snapshot.data.documents;
+                  List<Text> messageWidgets = [];
+                  for (var message in messages) {
+                    // 'text' and 'sender' must be the exact same in the database
+                    final messageText = message.data['text'];
+                    final messageSender = message.data['data'];
+
+                    final messageWidget =
+                        Text('$messageText from $messageSender');
+                    messageWidgets.add(messageWidget);
+                  }
+                  return Column(
+                    children: messageWidgets,
+                  );
+                }
+              },
+            ),
             Container(
               decoration: kMessageContainerDecoration,
               child: Row(
